@@ -2,14 +2,15 @@ const Img = require('../models/img_models.js');
 const multer = require('multer');
 
 exports.add = async (req, res)=>{  
-    const img = new Img(req.body);
-    try {
-        await img.save();
-        res.json({ok: true, message: 'Imagen agregada'});
-    } catch (error) {
-        console.log(error);
-        res.send({ok: false, message: error});
-    }
+    // const img = new Img(req.body);
+    // try {
+    //     await img.save();
+    //     res.json({ok: true, message: 'Imagen agregada'});
+    // } catch (error) {
+    //     console.log(error);
+    //     res.send({ok: false, message: error});
+    // }
+    res.json({ok: true, message: 'Foto subida'});
 }
 
 exports.list = async (req, res)=>{
