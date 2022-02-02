@@ -34,6 +34,7 @@ module.exports = ()=>{
     
     router.get('/api/img/show', imgControllers.list);
     router.get('/api/img/show/:id', imgControllers.show);
+    router.get('/api/img/user/show/', imgControllers.userShow);
     router.post('/api/img/upload', upload.single('myImg'),imgControllers.add);
     router.delete('/api/img/delete/:id', imgControllers.delete);
     return router;

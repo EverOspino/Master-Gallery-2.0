@@ -2,15 +2,23 @@ const Img = require('../models/img_models.js');
 const multer = require('multer');
 
 exports.add = async (req, res)=>{  
-    // const img = new Img(req.body);
-    // try {
-    //     await img.save();
-    //     res.json({ok: true, message: 'Imagen agregada'});
-    // } catch (error) {
-    //     console.log(error);
-    //     res.send({ok: false, message: error});
-    // }
-    res.json({ok: true, message: 'Foto subida'});
+    try {
+        const file = req.file;
+        // console.log(file);
+        const photoProps = {
+            filename: file.filename,
+            userid: req.session.user._id,
+            size: file.size,
+            mimeType: file.mimetype,
+            createdAt: new Date()
+        }
+        const img = new Img(photoProps);
+        img.save();
+        res.json({ok: true, message: 'Foto subida'});    
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: 'La foto no se pudo subir'});
+    }
 }
 
 exports.list = async (req, res)=>{
@@ -35,5 +43,25 @@ exports.delete = async(req, res)=>{
 }
 
 exports.show = async(req, res)=>{
+    try {
+        const img = await Img.findById(req.params.id);
+        if(!img) return res.json({ok: true, message: 'La foto no fue encontrada.'});
 
+        res.json(img)
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: 'La foto no fue encontrada'})
+        next();
+    }
+}
+
+exports.userShow = async (req, res)=>{
+    try {
+        const img = await Img.find({userid: req.session.user._id})
+
+        res.json(img);
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: 'No se pudo encontar la imagen'});
+    }
 }
