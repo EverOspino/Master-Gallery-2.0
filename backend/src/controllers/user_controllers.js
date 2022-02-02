@@ -72,3 +72,54 @@ exports.delete = async (req, res) => {
     }
 
 }
+
+exports.auth = async(req, res, next)=>{
+    try {
+        const {email, password} = req.body;
+        if(!password || !email) return res.json({ok: false, message: 'Hay campos vacíos'});
+        else{
+            const newUser = new User();
+            const userExists = await newUser.emailExists(email);
+
+            if(userExists){
+                const userFound = await User.findOne({email: email});
+                
+                // console.log(userFound);
+                // console.log(userFound.password);
+
+                const passCorrect = await newUser.isCorrectPassword(password, userFound.password);
+                if(passCorrect){
+                    req.session.user = userFound;
+                    // console.log(req.session);
+                    return res.json({ok: true, message: 'Usuario logueado'});
+                }
+            }
+            
+            res.json({ok: false, message: 'Email o contraseña incorrecta'});
+            
+        }    
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: 'error'})
+    }
+
+
+}
+
+exports.register = async(req, res, next)=>{
+    try {
+        const user = req.body;
+        if(!user.name || !user.password || !user.email) return res.json({ok: false, message: 'Hay campos vacíos.'});
+        else {
+            newUser = new User(user);
+            const exists = await newUser.emailExists(newUser.email);
+            if(exists) return res.json({ok: false, message: "El usuario ya existe"});
+    
+            await newUser.save();
+            res.json({ok: true, message: 'El usuario fue registrado'});
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: error})
+    }
+}
