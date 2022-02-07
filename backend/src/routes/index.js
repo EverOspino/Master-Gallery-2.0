@@ -21,21 +21,21 @@ const router = express.Router();
 
 module.exports = ()=>{
 
-    router.post('/api/users', userControllers.add);
-    router.get('/api/users', userControllers.list);
-    router.get('/api/users/:id', userControllers.show);
-    router.delete('/api/users/:id', userControllers.delete);
-    router.put('/api/users/:id', userControllers.uptdate);
+    router.post('/api/users', userControllers.add); //Sirve para agregar un usuario
+    router.get('/api/users', userControllers.list); //Mostrar todos los usuarios
+    router.get('/api/users/:id', userControllers.show); //Obtiene el usuario por id que se le mande
+    router.delete('/api/users/:id', userControllers.delete); //Elimina el usuario con el id que se le pase
+    router.put('/api/users/:id', userControllers.uptdate); //Ruta para actualizar los usuarios
 
-    //--------------------------------------------------------
-    router.get('/api/register', userControllers.register);
-    router.get('/api/auth', userControllers.auth);
-    //---------------------------------------------------------
+    //--------------------------------------------------------------------------------------
+    router.post('/api/register', userControllers.register); //Ruta para registrar al usuario
+    router.post('/api/auth', userControllers.auth); //Ruta para iniciar sesión
+    //--------------------------------------------------------------------------------------
     
-    router.get('/api/img/show', imgControllers.list);
-    router.get('/api/img/show/:id', imgControllers.show);
-    router.get('/api/img/user/show/', imgControllers.userShow);
-    router.post('/api/img/upload', upload.single('myImg'),imgControllers.add);
-    router.delete('/api/img/delete/:id', imgControllers.delete);
+    router.get('/api/img/show', imgControllers.list); //Muestra todas las fotos sin filtros
+    router.get('/api/img/show/:id', imgControllers.show); //Busca una imagen por id de la imagen
+    router.get('/api/img/user/show/', imgControllers.userShow); //Mostrar todas las fotos del usuario loguemos
+    router.post('/api/img/upload', upload.single('myImg'), imgControllers.add); //Actualiza las imagenes
+    router.delete('/api/img/delete/:id', imgControllers.delete); //Elimina la imagen del id que se le pase
     return router;
 }

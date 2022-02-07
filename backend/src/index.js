@@ -4,6 +4,7 @@ const cors = require('cors');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const express = require('express');
 
 dotenv.config();
 require('./database');
@@ -16,9 +17,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cors());
 
+// app.use(express.static('./public'));
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    // secret: "kkdkskASskkd-asdSDoasld",
     resave: false,
     saveUninitialized: false
 }))
