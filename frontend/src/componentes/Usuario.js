@@ -8,19 +8,9 @@ import { Buton } from './ButonX';
 import { Alert, Button } from 'react-bootstrap';
 import AlertaEliminar from './AlertaEliminar.js'
 
-//Firebase
-import { getAuth, signOut } from 'firebase/auth'
-import firebaseApp from '../config/Firebase_config';
-import { getFirestore, doc, setDoc, collection, query, getDocs, deleteDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-
 //Documentos
-import validarTipoImagen from './comprobarImagen.js';
+import validarTipoImagen from './validaciones/comprobarImagen.js';
 
-
-const auth = getAuth(firebaseApp);
-const firestore = getFirestore(firebaseApp);
-const storage = getStorage(firebaseApp);
 
 export default function Usuario( props ) {
 
@@ -31,23 +21,23 @@ export default function Usuario( props ) {
     const [deleteImg, setDeleteImg] = useState(false);
     const [nameImg, setNameImg] = useState('');
 
-    useEffect( async () =>{
+    /*useEffect( async () =>{
         const q = query(collection(firestore, `imagenes-${props.user.email}`));
 
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => { setImgList( oldArray => [...oldArray, doc.data()] ) });
-    }, [] );
+    }, [] );*/
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (deleteImg) {
             eliminarImagen(nameImg);
         }
-      }, [deleteImg]);
+      }, [deleteImg]);*/
 
     const subirImagen = async () => {
         if( archivo ) {
             if(validarTipoImagen(archivo.type)) {
-                setBarraCarga(10);
+                /*setBarraCarga(10);
     
                 const storageRef = ref(storage, `/imagenes/imagenes-${props.user.email}/${archivo.name}`);
                 await uploadBytes(storageRef, archivo);
@@ -60,7 +50,7 @@ export default function Usuario( props ) {
                 await setDoc(docuRef, { nombre: archivo.name, url: enlaceUrl });
                 setBarraCarga(100);
 
-                window.location.href = './';
+                window.location.href = './';*/
             }else{
                 alert('Por favor, Inserte una imagen');
             }
@@ -71,7 +61,7 @@ export default function Usuario( props ) {
 
 
     const eliminarImagen = async ( nombre ) => {
-        setBarraCarga(10);
+        /*setBarraCarga(10);
         //eliminando imagen del storage
         const deleteRef = ref(storage, `/imagenes/imagenes-${props.user.email}/${nombre}`);
         await deleteObject(deleteRef);
@@ -81,29 +71,30 @@ export default function Usuario( props ) {
         await deleteDoc(doc(firestore, `imagenes-${props.user.email}`, `${nombre}`));
 
         setBarraCarga(100);
-        window.location.href = './';
+        window.location.href = './';*/
     }
 
     const cerrarSesion = () => {
-        signOut(auth);
+        props.setUser('');
+        sessionStorage.clear();
         window.location.href = './';
     }
     
-//eliminarImagen(data.nombre)
+    /* { imgList.map( (data, idx) => {return ( 
+        <DivImagen> 
+            <Imagen key={idx} src={data.url} ></Imagen> 
+            <BotonEliminar onClick={ () => {setNameImg(data.nombre);  setShowAlert(true);} } > <img src='./imagenes/icono-cerrar.svg'></img> </BotonEliminar> 
+        </DivImagen> )} ) } */
+
     return (
         <>
             <Overlay>
                 <ContenedorModal>
                     <Encabezado>
-                        <h4>Bienvenido {props.user.displayName.toUpperCase()}, esta es su colección de imagenes</h4>
+                        <h4>Bienvenido {props.user.name.toUpperCase()}, esta es su colección de imagenes</h4>
                     </Encabezado>
                     <BotonCerrar onClick={cerrarSesion}> <img src='./imagenes/icono-cerrar.svg'></img> </BotonCerrar>
                     <ContenedorImagenes>
-                        { imgList.map( (data, idx) => {return ( 
-                        <DivImagen> 
-                            <Imagen key={idx} src={data.url} ></Imagen> 
-                            <BotonEliminar onClick={ () => {setNameImg(data.nombre);  setShowAlert(true);} } > <img src='./imagenes/icono-cerrar.svg'></img> </BotonEliminar> 
-                        </DivImagen> )} ) }
                         
                     </ContenedorImagenes>
                     <ContenedorInput>

@@ -8,33 +8,40 @@ import { ButonOutline } from './ButonOutline';
 import { Enlace } from './Enlace';
 import { ContentBox } from './ContentBox';
 
-//firebase
-import firebaseApp from '../config/Firebase_config';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-
 //Documentos
 import Usuario from './Usuario';
-import '../Componentes-css/background.css';
-import '../Componentes-css/Sesion.css';
-
-const auth = getAuth(firebaseApp);
+import validarFormulario from './validaciones/validadFormulario';
 
 export default function Sesion() {
     const [registerEmail, setRegisterEmail] = useState("");
     const [registerContraseña, setRegisterContraseña] = useState("");
+    const [userLogin, setUserLogin] = useState('');
 
+    //funcion que inicia la sesion de un usuario
     const iniciarSesion = async (e) => {
         e.preventDefault();
         
-        let camposLlenos = (registerEmail && registerContraseña) ? true : alert('Campo(s) Vacio(s)');
-        if (camposLlenos) {
-            try{
-                const infoUsuario = await signInWithEmailAndPassword(auth, registerEmail, registerContraseña);
+        const validacion = validarFormulario('sesion', registerEmail, registerContraseña) ;
+        if (validacion.ok) {
+            const usuario = {
+                email: registerEmail,
+                password: registerContraseña,
+            }
+            const res = await fetch( 'http://localhost:3001/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(usuario)} );
+            const data = await res.json();
+            if(data.ok){
+                setUserLogin(data.user);
+                sessionStorage.setItem('usuario', registerEmail);
+                sessionStorage.setItem('nombre', data.user.name);
 
-            }catch (error){
-                alert(error.code);
-                console.log(error);
-            } 
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+
+            } else{
+                console.log(data.message);
+            }
+        } else {
+            alert(validacion.mensaje);
         }
     }
 
@@ -43,16 +50,16 @@ export default function Sesion() {
             <Background>
                 <ContainerBox>
                     <Imagen />
-                    <ContentBox>
+                    <ContentBox2>
                         <Logo>
                             <ImgLogo src='./imagenes/logo-MG.svg'></ImgLogo>
                         </Logo>
                         <form>
-                            <Input type='email'
+                            <Input id='email' type='email'
                             onChange={(event) => {setRegisterEmail(event.target.value.toLocaleLowerCase())}} 
                             placeholder='Correo' required />
                             
-                            <Input type='password'
+                            <Input id='password' type='password'
                             onChange={(event) => {setRegisterContraseña(event.target.value)}} 
                             placeholder='Contraseña' required />
                             
@@ -61,10 +68,10 @@ export default function Sesion() {
                         <ContenedorEnlace>
                             <Enlace href='/registro'>Crea una cuenta</Enlace>
                         </ContenedorEnlace>
-                    </ContentBox>
+                    </ContentBox2>
                 </ContainerBox>
             </Background>
-            {auth.currentUser && <Usuario user={ auth.currentUser } />}
+            {userLogin && <Usuario user = {userLogin} setUser = {setUserLogin} />}
         </>
     )
 }
@@ -92,6 +99,10 @@ const ContainerBox = styled.div`
         height: 40vh;
     }
 
+`;
+
+const ContentBox2 = styled(ContentBox)`
+    width: 100%;
 `;
 
 const Imagen = styled.div`

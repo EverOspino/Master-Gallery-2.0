@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
 
 //Styled Components
-import styled, { GlobalStyleComponent } from 'styled-components';
+import styled from 'styled-components';
 import { Background } from './Background';
 import { Input } from './Input';
 import { ButonOutline } from './ButonOutline';
 import { Enlace } from './Enlace';
 import { ContentBox } from './ContentBox';
 
-//Firebase
-import firebaseApp from '../config/Firebase_config';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-
 //Documentos
-import validarEmail from './validarEmail';
-
-const auth = getAuth(firebaseApp);
-const firestore = getFirestore(firebaseApp);
+import validarFormulario from './validaciones/validadFormulario';
 
 export default function Registro()  {
     const [registerNombre, setRegisterNombre] = useState("");
@@ -25,29 +17,36 @@ export default function Registro()  {
     const [registerContraseña, setRegisterContraseña] = useState("");
     const [registerContraseña2, setRegisterContraseña2] = useState("");
 
+    //funcion que registra un usuario
     const registrarUsuario = async (e) => {
         e.preventDefault();
-
-        let camposllenos = (registerNombre && registerEmail && registerContraseña && registerContraseña2) ? true : alert('Campo(s) Vacio(s)');
-        if (camposllenos) {
-            if (validarEmail( registerEmail )) {
-                let isEqual = (registerContraseña === registerContraseña2) ? true : alert('Las contraseñas no coinciden');
-                if (isEqual) {
-                    try{
-                        const infoUsuario = await createUserWithEmailAndPassword(auth, registerEmail, registerContraseña);
-                        await updateProfile(infoUsuario.user, { displayName: registerNombre });
-                        
-                        const user = auth.currentUser;
-                        const envioCorreo = await sendEmailVerification(user);
-                        window.location.href = './respuesta';
-                    }catch (error){
-                        alert(error.code);
-                        console.log(error.message);
-                    }
-                }
-            } else{
-                alert('Correo no valido');
+        const validacion = validarFormulario('registro', registerEmail, registerContraseña, registerNombre, registerContraseña2);
+        if (validacion.ok) {
+            const usuario = {
+                name: registerNombre,
+                email: registerEmail,
+                password: registerContraseña,
             }
+
+            const res = await fetch( 'http://localhost:3001/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(usuario)} );
+            const data = await res.json();
+            if(data.ok){
+                sessionStorage.setItem('usuario', registerEmail);
+                sessionStorage.setItem('nombre', registerNombre);
+
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('password2').value = '';
+
+                window.location.href = './respuesta';
+            } else{
+                console.log(data.message);
+            }
+            //const envioCorreo = await sendEmailVerification(user);
+
+        } else{
+            alert(validacion.mensaje);
         }
     };
     
@@ -59,16 +58,16 @@ export default function Registro()  {
                     <Tittle>CREA TU CUENTA</Tittle>
                 </Logo>
                 <form>
-                    <Input type='text' 
+                    <Input id='name' type='text' 
                     onChange={(event) => {setRegisterNombre(event.target.value)}} placeholder='Nombre de Usuario' />
                     
-                    <Input type='email'
+                    <Input id='email' type='email'
                     onChange={(event) => {setRegisterEmail(event.target.value.toLocaleLowerCase())}} placeholder='Correo' required />
                     
-                    <Input type='password'
+                    <Input id='password' type='password'
                     onChange={(event) => {setRegisterContraseña(event.target.value)}} placeholder='Contraseña' required />
                     
-                    <Input type='password'
+                    <Input id='password2' type='password'
                     onChange={(event) => {setRegisterContraseña2(event.target.value)}} placeholder='Confirmar Contraseña' required />
                     
                     <ButonOutline type='submit' onClick={registrarUsuario}>REGISTRAR</ButonOutline>
