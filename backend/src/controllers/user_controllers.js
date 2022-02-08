@@ -91,7 +91,7 @@ exports.auth = async(req, res, next)=>{
                 if(passCorrect){
                     req.session.user = userFound;
                     // console.log(req.session);
-                    return res.json({ok: true, message: 'Usuario logueado'});
+                    return res.json({ok: true, message: 'Usuario logueado', user:userFound });
                 }
             }
             
