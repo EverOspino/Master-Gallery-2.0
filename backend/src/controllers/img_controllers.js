@@ -4,10 +4,10 @@ const multer = require('multer');
 exports.add = async (req, res)=>{  
     try {
         const file = req.file;
-        // console.log(file);
+        console.log(req);
         const photoProps = {
             filename: file.filename,
-            userid: req.session.user._id,
+            userid: req.body.userId,
             size: file.size,
             mimeType: file.mimetype,
             createdAt: new Date()
@@ -17,7 +17,7 @@ exports.add = async (req, res)=>{
         res.json({ok: true, message: 'Foto subida'});    
     } catch (error) {
         console.log(error);
-        res.json({ok: false, message: 'La foto no se pudo subir'});
+        res.json({ok: false, message: 'La foto no se pudo subir', error: error});
     }
 }
 
@@ -58,7 +58,7 @@ exports.show = async(req, res)=>{
 exports.userShow = async (req, res)=>{
     try {
         const img = await Img.find({userid: req.session.user._id})
-
+        
         res.json(img);
     } catch (error) {
         console.log(error);
