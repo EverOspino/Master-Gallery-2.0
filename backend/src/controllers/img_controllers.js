@@ -57,9 +57,9 @@ exports.show = async(req, res)=>{
 
 exports.userShow = async (req, res)=>{
     try {
-        const img = await Img.find({userid: req.session.user._id})
+        const img = await Img.find({userid: req.body.userId})
         
-        res.json(img);
+        res.json({ok: true, img: img});
     } catch (error) {
         console.log(error);
         res.json({ok: false, message: 'No se pudo encontar la imagen'});
