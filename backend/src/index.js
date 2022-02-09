@@ -5,6 +5,7 @@ const routes = require('./routes');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const express = require('express');
+const path = require('path');
 
 dotenv.config();
 require('./database');
@@ -17,7 +18,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cors());
 
-// app.use(express.static('./public'));
+ app.use(express.static(path.join(__dirname, './public/image')));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
