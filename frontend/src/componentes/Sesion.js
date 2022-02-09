@@ -30,9 +30,10 @@ export default function Sesion() {
             const res = await fetch( 'http://localhost:3001/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(usuario)} );
             const data = await res.json();
             if(data.ok){
-                setUserLogin(data.user);
                 sessionStorage.setItem('usuario', registerEmail);
                 sessionStorage.setItem('nombre', data.user.name);
+                sessionStorage.setItem('id', data.user._id);
+                setUserLogin(data.user);
 
                 document.getElementById('email').value = '';
                 document.getElementById('password').value = '';
@@ -71,7 +72,7 @@ export default function Sesion() {
                     </ContentBox2>
                 </ContainerBox>
             </Background>
-            {userLogin && <Usuario user = {userLogin} setUser = {setUserLogin} />}
+            {(userLogin || sessionStorage.getItem('usuario')) && <Usuario setUser = {setUserLogin} />}
         </>
     )
 }

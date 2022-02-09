@@ -21,12 +21,25 @@ export default function Usuario( props ) {
     const [deleteImg, setDeleteImg] = useState(false);
     const [nameImg, setNameImg] = useState('');
 
-    /*useEffect( async () =>{
-        const q = query(collection(firestore, `imagenes-${props.user.email}`));
+    useEffect( async () =>{
+        const res = await fetch( 'http://localhost:3001/api/img/user/show/'
+        , { method: 'POST',
+             headers: { 'Content-Type': 'application/json' }, 
+             body: JSON.stringify({userId: sessionStorage.getItem('id')})} );
+        const data = await res.json();
+
+        if (data.ok) {
+            console.log(data.img);
+        } else {
+            console.log(data.message);
+        }
+        
+
+        /*const q = query(collection(firestore, `imagenes-${props.user.email}`));
 
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => { setImgList( oldArray => [...oldArray, doc.data()] ) });
-    }, [] );*/
+        querySnapshot.forEach((doc) => { setImgList( oldArray => [...oldArray, doc.data()] ) });*/
+    }, [] );
 
     /*useEffect(() => {
         if (deleteImg) {
@@ -37,6 +50,20 @@ export default function Usuario( props ) {
     const subirImagen = async () => {
         if( archivo ) {
             if(validarTipoImagen(archivo.type)) {
+                console.log(archivo);
+                const formData = new FormData();
+                formData.append("myImg", archivo);
+                formData.append("userId", sessionStorage.getItem('id'));
+                const res = await fetch( 'http://localhost:3001/api/img/upload', { method: 'POST',  body: formData} );
+                const data = await res.json();
+
+                if(data.ok){
+                    console.log(data);
+    
+                } else{
+                    console.log(data);
+                }
+
                 /*setBarraCarga(10);
     
                 const storageRef = ref(storage, `/imagenes/imagenes-${props.user.email}/${archivo.name}`);
@@ -50,7 +77,8 @@ export default function Usuario( props ) {
                 await setDoc(docuRef, { nombre: archivo.name, url: enlaceUrl });
                 setBarraCarga(100);
 
-                window.location.href = './';*/
+                */
+                window.location.href = './';
             }else{
                 alert('Por favor, Inserte una imagen');
             }
@@ -91,14 +119,14 @@ export default function Usuario( props ) {
             <Overlay>
                 <ContenedorModal>
                     <Encabezado>
-                        <h4>Bienvenido {props.user.name.toUpperCase()}, esta es su colección de imagenes</h4>
+                        <h4>Bienvenido {sessionStorage.getItem('nombre')}, esta es su colección de imagenes</h4>
                     </Encabezado>
                     <BotonCerrar onClick={cerrarSesion}> <img src='./imagenes/icono-cerrar.svg'></img> </BotonCerrar>
                     <ContenedorImagenes>
                         
                     </ContenedorImagenes>
                     <ContenedorInput>
-                        <input type='file' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
+                        <input type='file' name='myImg' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
                         <progress value={barraCarga} max={100}></progress>
                         <BotonSubir onClick={subirImagen}> <img src='./imagenes/upload.svg'></img> </BotonSubir>
                     </ContenedorInput>
