@@ -14,10 +14,10 @@ exports.add = async (req, res)=>{
         }
         const img = new Img(photoProps);
         img.save();
-        res.json({ok: true, message: 'Foto subida'});    
+        res.json({ok: true, message: 'Imagen subida', img: img});    
     } catch (error) {
         console.log(error);
-        res.json({ok: false, message: 'La foto no se pudo subir', error: error});
+        res.json({ok: false, message: 'La imagen no se pudo subir', error: error});
     }
 }
 
@@ -45,12 +45,12 @@ exports.delete = async(req, res)=>{
 exports.show = async(req, res)=>{
     try {
         const img = await Img.findById(req.params.id);
-        if(!img) return res.json({ok: true, message: 'La foto no fue encontrada.'});
+        if(!img) return res.json({ok: true, message: 'La imagen no fue encontrada.'});
 
         res.json(img)
     } catch (error) {
         console.log(error);
-        res.json({ok: false, message: 'La foto no fue encontrada'})
+        res.json({ok: false, message: 'La imagen no fue encontrada'})
         next();
     }
 }
