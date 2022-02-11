@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 //Styled Components
-import styled, { GlobalStyleComponent } from 'styled-components';
+import styled from 'styled-components';
 import { Buton } from './ButonX';
 
 //Bootstrap Components
-import { Alert, Button } from 'react-bootstrap';
 import AlertaEliminar from './AlertaEliminar.js'
 
 //Documentos
@@ -15,42 +14,38 @@ import validarTipoImagen from './validaciones/comprobarImagen.js';
 export default function Usuario( props ) {
 
     const [archivo, setArchivo] = useState("");
-    const [barraCarga, setBarraCarga] = useState(0);
+    const [errorMsg, setErrorMsg] = useState("");
     const [imgList, setImgList] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     const [deleteImg, setDeleteImg] = useState(false);
-    const [nameImg, setNameImg] = useState('');
+    const [idImg, setIdImg] = useState('');
 
     useEffect( async () =>{
-        const res = await fetch( 'http://localhost:3001/api/img/user/show/'
-        , { method: 'POST',
-             headers: { 'Content-Type': 'application/json' }, 
-             body: JSON.stringify({userId: sessionStorage.getItem('id')})} );
+        const res = await fetch( 'http://localhost:3001/api/img/user/show/', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({userId: sessionStorage.getItem('id')})} );
         const data = await res.json();
 
         if (data.ok) {
-            console.log(data.img);
-        } else {
-            console.log(data.message);
+            //console.log(data.img);
+            setImgList(data.img);
+            
         }
-        
-
-        /*const q = query(collection(firestore, `imagenes-${props.user.email}`));
-
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => { setImgList( oldArray => [...oldArray, doc.data()] ) });*/
     }, [] );
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (deleteImg) {
-            eliminarImagen(nameImg);
+            eliminarImagen(idImg);
+            setDeleteImg(false);
         }
-      }, [deleteImg]);*/
+      }, [deleteImg]);
+
 
     const subirImagen = async () => {
         if( archivo ) {
             if(validarTipoImagen(archivo.type)) {
-                console.log(archivo);
+                //console.log(archivo);
                 const formData = new FormData();
                 formData.append("myImg", archivo);
                 formData.append("userId", sessionStorage.getItem('id'));
@@ -58,48 +53,38 @@ export default function Usuario( props ) {
                 const data = await res.json();
 
                 if(data.ok){
-                    console.log(data);
+                    //console.log(data.message);
+                    setImgList( oldArray => [...oldArray, data.img] );
+                    setErrorMsg('');
+                    //window.location.href = './';
     
                 } else{
-                    console.log(data);
+                    setErrorMsg(data.message);
                 }
-
-                /*setBarraCarga(10);
-    
-                const storageRef = ref(storage, `/imagenes/imagenes-${props.user.email}/${archivo.name}`);
-                await uploadBytes(storageRef, archivo);
-                setBarraCarga(30);
-    
-                const enlaceUrl = await getDownloadURL(storageRef);
-                setBarraCarga(60);
-    
-                const docuRef = doc(firestore, `/imagenes-${props.user.email}/${archivo.name}`);
-                await setDoc(docuRef, { nombre: archivo.name, url: enlaceUrl });
-                setBarraCarga(100);
-
-                */
-                window.location.href = './';
+                //setBarraCarga(10);
             }else{
-                alert('Por favor, Inserte una imagen');
+                setErrorMsg('Inserte una imagen');
             }
         }else{
-            alert('Por favor, Inserte una imagen');
+            setErrorMsg('Inserte una imagen');
         }
     }
 
 
-    const eliminarImagen = async ( nombre ) => {
-        /*setBarraCarga(10);
-        //eliminando imagen del storage
-        const deleteRef = ref(storage, `/imagenes/imagenes-${props.user.email}/${nombre}`);
-        await deleteObject(deleteRef);
+    const eliminarImagen = async ( id ) => {
+        const res = await fetch( `http://localhost:3001/api/img/delete/${id}`, { method: 'DELETE'} );
+        const data = await res.json();
 
-        setBarraCarga(50);
-        //eliminando el documento de la imagen del firestore
-        await deleteDoc(doc(firestore, `imagenes-${props.user.email}`, `${nombre}`));
-
-        setBarraCarga(100);
-        window.location.href = './';*/
+        if (data.ok) {
+            //console.log(data.message);
+            const contenedorImagen = document.getElementById('contenedor-imagenes');
+            contenedorImagen.removeChild( document.getElementById(id) );
+            setErrorMsg('');
+            //window.location.href = './';
+        } else {
+            setErrorMsg(data.message);
+        }
+        /*setBarraCarga(10);*/
     }
 
     const cerrarSesion = () => {
@@ -107,27 +92,31 @@ export default function Usuario( props ) {
         sessionStorage.clear();
         window.location.href = './';
     }
-    
-    /* { imgList.map( (data, idx) => {return ( 
-        <DivImagen> 
-            <Imagen key={idx} src={data.url} ></Imagen> 
-            <BotonEliminar onClick={ () => {setNameImg(data.nombre);  setShowAlert(true);} } > <img src='./imagenes/icono-cerrar.svg'></img> </BotonEliminar> 
-        </DivImagen> )} ) } */
+
 
     return (
         <>
             <Overlay>
                 <ContenedorModal>
                     <Encabezado>
-                        <h4>Bienvenido {sessionStorage.getItem('nombre')}, esta es su colección de imagenes</h4>
+                        <h4>Bienvenido {sessionStorage.getItem('nombre')}, esta es su colección de imágenes</h4>
                     </Encabezado>
                     <BotonCerrar onClick={cerrarSesion}> <img src='./imagenes/icono-cerrar.svg'></img> </BotonCerrar>
-                    <ContenedorImagenes>
+                    <ContenedorImagenes id='contenedor-imagenes'>
                         
+                    { imgList.map( (data, idx) => {return ( 
+                        <DivImagen key={idx} id={data._id}> 
+                            <Imagen src={`http://localhost:3001/${data.filename}`} ></Imagen> 
+                            <BotonEliminar onClick={ () => {setIdImg(data._id);  setShowAlert(true);} } > 
+                                <img src='./imagenes/icono-cerrar.svg'></img> 
+                            </BotonEliminar> 
+                        </DivImagen> )} ) 
+                    }
+
                     </ContenedorImagenes>
                     <ContenedorInput>
                         <input type='file' name='myImg' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
-                        <progress value={barraCarga} max={100}></progress>
+                        <span>{ errorMsg }</span>
                         <BotonSubir onClick={subirImagen}> <img src='./imagenes/upload.svg'></img> </BotonSubir>
                     </ContenedorInput>
                 </ContenedorModal>
@@ -163,13 +152,13 @@ const ContenedorModal = styled.div`
         height: 80%;
         padding: 10px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         width: 90%;
         height: 70%;
         padding: 20px;
         font-size: 1.375rem;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         width: 40%;
         height: 70%;
         padding: 15px;
@@ -196,10 +185,10 @@ const Encabezado = styled.div`
         @media screen and ( max-width: 575px) {
             font-size: 20px;
         }
-        @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+        @media screen and ( min-width: 576px) and ( max-width: 1023px) {
             font-size: 23px;
         }
-        @media screen and ( min-width: 1200px) {
+        @media screen and ( min-width: 1024px) {
             font-size: 17px;
         }
         @media screen and (min-width: 1900px) {
@@ -217,11 +206,11 @@ const BotonCerrar = styled(Buton)`
         height: 35px;
         width: 35px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         height: 45px;
         width: 45px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         height: 32px;
         width: 32px;
     }
@@ -273,11 +262,11 @@ const BotonEliminar = styled(Buton)`
         height: 25px;
         width: 25px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         height: 30px;
         width: 30px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         height: 25px;
         width: 25px;
     }
@@ -294,8 +283,9 @@ const ContenedorInput = styled.div`
     align-items: center;
     justify-content: space-between;
 
-    progress{
+    span{
         width: 40%;
+        color: ${({theme}) => theme.colorError };
     }
 
     input{
@@ -304,10 +294,10 @@ const ContenedorInput = styled.div`
         @media screen and ( max-width: 575px) {
             font-size: 1rem;
         }
-        @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+        @media screen and ( min-width: 576px) and ( max-width: 1023px) {
             font-size: 1.3rem;
         }
-        @media screen and ( min-width: 1200px) {
+        @media screen and ( min-width: 1024px) {
             font-size: .9rem;
         }
         @media screen and (min-width: 1900px) {
@@ -322,11 +312,11 @@ const BotonSubir = styled(Buton)`
         height: 38px;
         width: 38px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         height: 46px;
         width: 46px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         height: 38px;
         width: 38px;
     }

@@ -9,10 +9,10 @@ export const Enlace = styled.a`
     @media screen and ( max-width: 575px) {
         font-size: 20px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         font-size: 18px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         font-size: 13px;
     }
     @media screen and (min-width: 1900px) {

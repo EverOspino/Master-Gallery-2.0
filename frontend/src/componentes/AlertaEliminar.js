@@ -6,6 +6,7 @@ import styled from 'styled-components';
 export default function AlertaEliminar( props ) {
   return (
     <>
+      <Modal onClick={() => props.setShowAlert(false)}>
       <Alerta variant="danger" onClose={() => props.setShowAlert(false)} dismissible>
         <Alert.Heading>¿Queres eliminar tu imagen?</Alert.Heading>
         <hr />
@@ -17,10 +18,21 @@ export default function AlertaEliminar( props ) {
           </Button>
         </div>
       </Alerta>
+      </Modal>
     </>
   );
 }
 
 const Alerta = styled(Alert)`
   position: absolute;
+`;
+
+const Modal = styled.div`
+  position: absolute;
+  background: rgba(0, 0, 0, .2);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

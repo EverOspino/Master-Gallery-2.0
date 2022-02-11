@@ -6,6 +6,7 @@ const LightTheme = {
     hover: '#ddd',
     bgcInput: '#E0DEDE',
     colorSvg: 'none',
+    colorError: '#BF0926',
 };
 
 const DarkTheme = {
@@ -15,6 +16,7 @@ const DarkTheme = {
     hover: '#444',
     bgcInput: '#444',
     colorSvg: 'invert()',
+    colorError: '#FB9AEF',
 };
 
 const Themes = {

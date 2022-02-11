@@ -41,12 +41,14 @@ export default function Registro()  {
 
                 window.location.href = './respuesta';
             } else{
+                document.getElementById('errorMessage').innerHTML = data.message;
                 console.log(data.message);
             }
             //const envioCorreo = await sendEmailVerification(user);
 
         } else{
-            alert(validacion.mensaje);
+            document.getElementById('errorMessage').innerHTML = validacion.mensaje;
+            //alert(validacion.mensaje);
         }
     };
     
@@ -70,6 +72,8 @@ export default function Registro()  {
                     <Input id='password2' type='password'
                     onChange={(event) => {setRegisterContraseña2(event.target.value)}} placeholder='Confirmar Contraseña' required />
                     
+                    <ErrorMessage id='errorMessage'></ErrorMessage>
+
                     <ButonOutline type='submit' onClick={registrarUsuario}>REGISTRAR</ButonOutline>
                 </form>
                 <ContenedorEnlace>
@@ -85,11 +89,11 @@ const Content = styled(ContentBox)`
         width: 94%;
         height: 75%;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         width: 60vw;
         height: 60vw;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         width: 320px;
     }
     @media screen and (min-width: 1900px) {
@@ -109,14 +113,38 @@ const Tittle = styled.p`
     @media screen and ( max-width: 575px) {
         font-size: 28px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         font-size: 28px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         font-size: 20px;
     }
     @media screen and (min-width: 1900px) {
         font-size: 28px;
+    }
+`;
+
+const ErrorMessage = styled.p`
+    display: block;
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
+
+    @media screen and ( max-width: 575px) {
+        height: 20px;
+        font-size: 18px;
+    }
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
+        height: 20px;
+        font-size: 15px;
+    }
+    @media screen and ( min-width: 1024px) {
+        height: 20px;
+        font-size: 15px;
+    }
+    @media screen and (min-width: 1900px) {
+        height: 20px;
+        font-size: 15px;
     }
 `;
 

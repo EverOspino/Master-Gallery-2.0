@@ -12,16 +12,16 @@ export const ButonOutline = styled.button`
     transition: background-color .5s;
 
     @media screen and ( max-width: 575px) {
-        margin: 20px 0px;
+        margin: 10px 0px;
         padding: 10px 20px;
         font-size: 18px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         margin: 18px 0px;
         padding: 10px 20px;
         font-size: 16px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         margin: 10px 0px;
         padding: 5px 10px;
     }

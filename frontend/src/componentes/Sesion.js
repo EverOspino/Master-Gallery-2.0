@@ -39,10 +39,12 @@ export default function Sesion() {
                 document.getElementById('password').value = '';
 
             } else{
+                document.getElementById('errorMessage').innerHTML = data.message;
                 console.log(data.message);
             }
         } else {
-            alert(validacion.mensaje);
+            document.getElementById('errorMessage').innerHTML = validacion.mensaje;
+            //alert(validacion.mensaje);
         }
     }
 
@@ -63,7 +65,7 @@ export default function Sesion() {
                             <Input id='password' type='password'
                             onChange={(event) => {setRegisterContraseña(event.target.value)}} 
                             placeholder='Contraseña' required />
-                            
+                            <ErrorMessage id='errorMessage'></ErrorMessage>
                             <ButonOutline type='submit' onClick={iniciarSesion} >INGRESAR</ButonOutline>
                         </form>
                         <ContenedorEnlace>
@@ -86,12 +88,13 @@ const ContainerBox = styled.div`
     @media screen and ( max-width: 575px) {
         width: 95%;
         height: 55%;
+        grid-template-columns: 1fr;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         width: 80vw;
         height: 51vw;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         width: 500px;
         height: 300px;
     }
@@ -104,6 +107,7 @@ const ContainerBox = styled.div`
 
 const ContentBox2 = styled(ContentBox)`
     width: 100%;
+    height: 100%;
 `;
 
 const Imagen = styled.div`
@@ -130,10 +134,10 @@ const ImgLogo = styled.img`
     @media screen and ( max-width: 575px) {
         width: 170px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         width: 135px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         width: 115px;
     }
     @media screen and (min-width: 1900px) {
@@ -141,6 +145,43 @@ const ImgLogo = styled.img`
     }
 `;
 
+const ErrorMessage = styled.p`
+    display: block;
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
+
+    @media screen and ( max-width: 575px) {
+        height: 20px;
+        font-size: 18px;
+    }
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
+        height: 20px;
+        font-size: 15px;
+    }
+    @media screen and ( min-width: 1024px) {
+        height: 20px;
+        font-size: 15px;
+    }
+    @media screen and (min-width: 1900px) {
+        height: 20px;
+        font-size: 15px;
+    }
+`;
+
 const ContenedorEnlace = styled.div`
     grid-row: 3/4;
+
+    @media screen and ( max-width: 575px) {
+        margin: 20px;
+    }
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
+        margin: 10px;
+    }
+    @media screen and ( min-width: 1024px) {
+        margin: 5px;
+    }
+    @media screen and (min-width: 1900px) {
+        margin: 5px;
+    }
 `;

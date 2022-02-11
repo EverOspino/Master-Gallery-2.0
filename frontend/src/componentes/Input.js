@@ -14,14 +14,14 @@ export const Input = styled.input`
         padding: 5px;
         font-size: 22px;
     }
-    @media screen and ( min-width: 576px) and ( max-width: 1199px) {
+    @media screen and ( min-width: 576px) and ( max-width: 1023px) {
         width: 38vw;
         height: 4vw;
         margin: 22px;
         padding: 5px;
         font-size: 20px;
     }
-    @media screen and ( min-width: 1200px) {
+    @media screen and ( min-width: 1024px) {
         width: 30vh;
         margin: 20px;
         padding: 5px;
