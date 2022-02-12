@@ -43,31 +43,26 @@ export default function Usuario( props ) {
 
 
     const subirImagen = async () => {
-        if( archivo ) {
-            if(validarTipoImagen(archivo.type)) {
-                //console.log(archivo);
-                const formData = new FormData();
-                formData.append("myImg", archivo);
-                formData.append("userId", sessionStorage.getItem('id'));
-                const res = await fetch( 'http://localhost:3001/api/img/upload', { method: 'POST',  body: formData} );
-                const data = await res.json();
+        if( archivo && validarTipoImagen(archivo.type) ) {
+            const formData = new FormData();
+            formData.append("myImg", archivo);
+            formData.append("userId", sessionStorage.getItem('id'));
+            const res = await fetch( 'http://localhost:3001/api/img/upload', { method: 'POST',  body: formData} );
+            const data = await res.json();
 
-                if(data.ok){
-                    //console.log(data.message);
-                    setImgList( oldArray => [...oldArray, data.img] );
-                    setErrorMsg('');
-                    //window.location.href = './';
-    
-                } else{
-                    setErrorMsg(data.message);
-                }
-                //setBarraCarga(10);
-            }else{
-                setErrorMsg('Inserte una imagen');
+            if(data.ok){
+                //console.log(data.message);
+                setImgList( oldArray => [...oldArray, data.img] );
+                setErrorMsg('');
+            } else{
+                setErrorMsg(data.message);
             }
         }else{
             setErrorMsg('Inserte una imagen');
         }
+        setArchivo(null);
+        document.getElementById('inputImage').value = '';
+        
     }
 
 
@@ -80,11 +75,9 @@ export default function Usuario( props ) {
             const contenedorImagen = document.getElementById('contenedor-imagenes');
             contenedorImagen.removeChild( document.getElementById(id) );
             setErrorMsg('');
-            //window.location.href = './';
         } else {
             setErrorMsg(data.message);
         }
-        /*setBarraCarga(10);*/
     }
 
     const cerrarSesion = () => {
@@ -115,12 +108,12 @@ export default function Usuario( props ) {
 
                     </ContenedorImagenes>
                     <ContenedorInput>
-                        <input type='file' name='myImg' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
+                        <input id='inputImage' type='file' name='myImg' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
                         <span>{ errorMsg }</span>
                         <BotonSubir onClick={subirImagen}> <img src='./imagenes/upload.svg'></img> </BotonSubir>
                     </ContenedorInput>
                 </ContenedorModal>
-                {showAlert &&  <AlertaEliminar showAlert={ showAlert } setShowAlert={ setShowAlert } setDeleteImg={setDeleteImg} />} 
+                {showAlert &&  <AlertaEliminar showAlert={ showAlert } setShowAlert={ setShowAlert } setDeleteImg={setDeleteImg} />}
             </Overlay>
 
         </>
@@ -234,7 +227,7 @@ const ContenedorImagenes = styled.div`
 
 const DivImagen = styled.div`
     position: relative;
-    max-width: 33%;
+    max-width: 32%;
     height: 25%;
     flex-grow: 1;
 `;
