@@ -4,6 +4,8 @@ const imgControllers = require('../controllers/img_controllers.js');
 const multer = require('multer');
 const path = require('path');
 
+
+
 const storage = multer.diskStorage({
     destination: function(req, res, cb){
         console.log(path.join(__dirname, '../public/image'));

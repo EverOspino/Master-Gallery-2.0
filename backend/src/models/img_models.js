@@ -7,7 +7,8 @@ const imgSchema = new Schema({
     userid: {type: String, required: true},
     size: {type: Number, required: true},
     mimeType: {type: String, required: true},
-    createdAt: {type: Date, required: true, default: Date.now}
+    createdAt: {type: Date, required: true, default: Date.now},
+    imageURL: {type: String, required: true}
 });
 
 module.exports = mongoose.model("Img", imgSchema);

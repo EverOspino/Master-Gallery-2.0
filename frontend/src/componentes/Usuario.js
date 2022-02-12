@@ -99,7 +99,7 @@ export default function Usuario( props ) {
                         
                     { imgList.map( (data, idx) => {return ( 
                         <DivImagen key={idx} id={data._id}> 
-                            <Imagen src={`http://localhost:3001/${data.filename}`} ></Imagen> 
+                            <Imagen src={data.imageURL} ></Imagen> 
                             <BotonEliminar onClick={ () => {setIdImg(data._id);  setShowAlert(true);} } > 
                                 <img src='./imagenes/icono-cerrar.svg'></img> 
                             </BotonEliminar> 

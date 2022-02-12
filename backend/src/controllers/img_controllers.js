@@ -1,16 +1,27 @@
 const Img = require('../models/img_models.js');
 const multer = require('multer');
+const dotenv = require('dotenv').config();
+
+const cloudinary = require('../config/cloudinary.config.js');
+
 
 exports.add = async (req, res)=>{  
     try {
         const file = req.file;
-        console.log(req);
+        console.log("Req.... Body")
+        console.log(req.body)
+        console.log("Req.... File")
+        console.log(req.file);
+        const result = await cloudinary.v2.uploader.upload(req.file.path);
+        console.log("Req.... Cloudinary")
+        console.log(result);
         const photoProps = {
-            filename: file.filename,
+            filename: result.public_id,
             userid: req.body.userId,
-            size: file.size,
+            size: result.bytes,
             mimeType: file.mimetype,
-            createdAt: new Date()
+            imageURL: result.secure_url,
+            createdAt: new Date(),
         }
         const img = new Img(photoProps);
         img.save();
