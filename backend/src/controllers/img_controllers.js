@@ -28,6 +28,7 @@ exports.add = async (req, res)=>{
 }
 exports.addMultiple = async(req, res)=>{
     const files = req.files;
+    const newFiles = [];
     console.log(files);
     try {
         for (let index = 0; index < files.length; index++) {
@@ -44,13 +45,15 @@ exports.addMultiple = async(req, res)=>{
             }
             const img = new Img(photoProps);
             img.save();
+            newFiles.push({img});
         }
     } catch (error) {
         console.log(error);
         res.json({ok: false, message: 'La imagen no se pudo subir', error: error});
     }
-    res.json({ok: true, message: 'Imagen subida', files});   
+    res.json({ok: true, message: 'Imagen subida', img: newFiles});   
 }
+
 exports.list = async (req, res)=>{
     try {
         const imgs = await Img.find({});
