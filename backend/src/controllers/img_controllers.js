@@ -34,7 +34,7 @@ exports.addMultiple = async(req, res)=>{
         for (let index = 0; index < files.length; index++) {
             const file = req.files[index];
             const result = await cloudinary.v2.uploader.upload(file.path);
-        
+            
             const photoProps = {
                 filename: result.public_id,
                 userid: req.body.userId,
@@ -66,8 +66,9 @@ exports.list = async (req, res)=>{
 
 exports.delete = async(req, res)=>{
     try {
-        await Img.findByIdAndRemove({"_id": req.params.id})
-
+        const photo = await Img.findByIdAndRemove({"_id": req.params.id});
+        const result = await cloudinary.v2.uploader.destroy(photo.filename);
+        
         res.json({ok: true, message: 'Imagen elimanda con éxito'});
     } catch (error) {
         console.log(error);
