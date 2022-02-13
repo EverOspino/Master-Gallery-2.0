@@ -38,7 +38,7 @@ module.exports = ()=>{
     router.get('/api/img/show/:id', imgControllers.show); //Busca una imagen por id de la imagen
     router.post('/api/img/user/show/', imgControllers.userShow); //Mostrar todas las fotos del usuario loguemos
     router.post('/api/img/upload/single', upload.single('myImg'), imgControllers.add); //Actualiza las imagenes
-    router.post('/api/img/upload/array', upload.array('myImg'), imgControllers.add); //Actualiza las imagenes
+    router.post('/api/img/upload/array', upload.array('myImg'), imgControllers.addMultiple); //Actualiza las imagenes
     router.delete('/api/img/delete/:id', imgControllers.delete); //Elimina la imagen del id que se le pase
     return router;
 }

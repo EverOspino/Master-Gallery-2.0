@@ -26,7 +26,31 @@ exports.add = async (req, res)=>{
         res.json({ok: false, message: 'La imagen no se pudo subir', error: error});
     }
 }
-
+exports.addMultiple = async(req, res)=>{
+    const files = req.files;
+    console.log(files);
+    try {
+        for (let index = 0; index < files.length; index++) {
+            const file = req.files[index];
+            const result = await cloudinary.v2.uploader.upload(file.path);
+        
+            const photoProps = {
+                filename: result.public_id,
+                userid: req.body.userId,
+                size: result.bytes,
+                mimeType: file.mimetype,
+                imageURL: result.secure_url,
+                createdAt: new Date(),
+            }
+            const img = new Img(photoProps);
+            img.save();
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ok: false, message: 'La imagen no se pudo subir', error: error});
+    }
+    res.json({ok: true, message: 'Imagen subida', files});   
+}
 exports.list = async (req, res)=>{
     try {
         const imgs = await Img.find({});
