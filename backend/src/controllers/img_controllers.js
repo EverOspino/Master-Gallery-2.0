@@ -8,13 +8,8 @@ const cloudinary = require('../config/cloudinary.config.js');
 exports.add = async (req, res)=>{  
     try {
         const file = req.file;
-        console.log("Req.... Body")
-        console.log(req.body)
-        console.log("Req.... File")
-        console.log(req.file);
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        console.log("Req.... Cloudinary")
-        console.log(result);
+
         const photoProps = {
             filename: result.public_id,
             userid: req.body.userId,
