@@ -19,19 +19,19 @@ export default function Usuario( props ) {
     const [showAlert, setShowAlert] = useState(false);
     const [deleteImg, setDeleteImg] = useState(false);
     const [idImg, setIdImg] = useState('');
+    const [cursorProgress, setCursorProgress] = useState(false);
 
     useEffect( async () =>{
+        setCursorProgress(true);
         const res = await fetch( 'http://localhost:3001/api/img/user/show/', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({userId: sessionStorage.getItem('id')})} );
         const data = await res.json();
-
         if (data.ok) {
-            //console.log(data.img);
             setImgList(data.img);
-            
         }
+        setCursorProgress(false);
     }, [] );
 
     useEffect(() => {
@@ -41,11 +41,10 @@ export default function Usuario( props ) {
         }
       }, [deleteImg]);
 
-// && validarTipoImagen(archivo.type) 
     const subirImagen = async () => {
-        console.log(archivo);
-        if( archivo ) {
-            for (let index = 0; index < archivo.length; index++) {
+        setCursorProgress(true);
+        for (let index = 0; index < archivo.length; index++) {
+            if( archivo[index] && validarTipoImagen(archivo[index].type ) ) {
                 const formData = new FormData();
                 formData.append("myImg", archivo[index]);
                 formData.append("userId", sessionStorage.getItem('id'));
@@ -54,35 +53,33 @@ export default function Usuario( props ) {
                 const data = await res.json();
 
                 if(data.ok){
-                    //console.log(data.img);
                     setImgList( oldArray => [...oldArray, data.img] );
                     setErrorMsg('');
                 } else{
                     setErrorMsg(data.message);
                 }
+            }else{
+                setErrorMsg('Inserte una imagen');
             }
-            
-        }else{
-            setErrorMsg('Inserte una imagen');
         }
         setArchivo(null);
         document.getElementById('inputImage').value = '';
-        
+        setCursorProgress(false);
     }
 
 
     const eliminarImagen = async ( id ) => {
+        setCursorProgress(true);
         const res = await fetch( `http://localhost:3001/api/img/delete/${id}`, { method: 'DELETE'} );
         const data = await res.json();
-
         if (data.ok) {
-            //console.log(data.message);
             const contenedorImagen = document.getElementById('contenedor-imagenes');
             contenedorImagen.removeChild( document.getElementById(id) );
             setErrorMsg('');
         } else {
             setErrorMsg(data.message);
         }
+        setCursorProgress(false);
     }
 
     const cerrarSesion = () => {
@@ -94,23 +91,21 @@ export default function Usuario( props ) {
 
     return (
         <>
-            <Overlay>
+            <Overlay cursorProgress={cursorProgress}>
                 <ContenedorModal>
                     <Encabezado>
                         <h4>Bienvenido {sessionStorage.getItem('nombre')}, esta es su colección de imágenes</h4>
                     </Encabezado>
                     <BotonCerrar onClick={cerrarSesion}> <img src='./imagenes/icono-cerrar.svg'></img> </BotonCerrar>
-                    <ContenedorImagenes id='contenedor-imagenes'>
-                        
-                    { imgList.map( (data, idx) => {return ( 
-                        <DivImagen key={idx} id={data._id}> 
-                            <Imagen src={data.imageURL} ></Imagen> 
-                            <BotonEliminar onClick={ () => {setIdImg(data._id);  setShowAlert(true);} } > 
-                                <img src='./imagenes/icono-cerrar.svg'></img> 
-                            </BotonEliminar> 
-                        </DivImagen> )} ) 
-                    }
-
+                    <ContenedorImagenes id='contenedor-imagenes'>  
+                        { imgList.map( (data, idx) => {return ( 
+                            <DivImagen key={idx} id={data._id}> 
+                                <Imagen src={data.imageURL} ></Imagen> 
+                                <BotonEliminar onClick={ () => {setIdImg(data._id);  setShowAlert(true);} } > 
+                                    <img src='./imagenes/icono-cerrar.svg'></img> 
+                                </BotonEliminar> 
+                            </DivImagen> )} ) 
+                        }
                     </ContenedorImagenes>
                     <ContenedorInput>
                         <input id='inputImage' type='file' multiple name='myImg' onChange={(event) => {setArchivo(event.target.files)}}></input>
@@ -138,6 +133,8 @@ const Overlay = styled.div`
     justify-content: center;
     font-size: 16px;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+    cursor: ${ ({cursorProgress}) => cursorProgress ? 'progress' : 'default' };
 `;
 
 const ContenedorModal = styled.div`
@@ -249,7 +246,6 @@ const Imagen = styled.img`
 
 `;
 
-
 const BotonEliminar = styled(Buton)`
     position: absolute;
     top: 3px;
@@ -273,7 +269,6 @@ const BotonEliminar = styled(Buton)`
         width: 35px;
     }
 `;
-
 
 const ContenedorInput = styled.div`
     display: flex;
