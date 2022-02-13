@@ -41,22 +41,27 @@ export default function Usuario( props ) {
         }
       }, [deleteImg]);
 
-
+// && validarTipoImagen(archivo.type) 
     const subirImagen = async () => {
-        if( archivo && validarTipoImagen(archivo.type) ) {
-            const formData = new FormData();
-            formData.append("myImg", archivo);
-            formData.append("userId", sessionStorage.getItem('id'));
-            const res = await fetch( 'http://localhost:3001/api/img/upload', { method: 'POST',  body: formData} );
-            const data = await res.json();
+        console.log(archivo);
+        if( archivo ) {
+            for (let index = 0; index < archivo.length; index++) {
+                const formData = new FormData();
+                formData.append("myImg", archivo[index]);
+                formData.append("userId", sessionStorage.getItem('id'));
 
-            if(data.ok){
-                //console.log(data.message);
-                setImgList( oldArray => [...oldArray, data.img] );
-                setErrorMsg('');
-            } else{
-                setErrorMsg(data.message);
+                const res = await fetch( `http://localhost:3001/api/img/upload/single`, { method: 'POST',  body: formData} );
+                const data = await res.json();
+
+                if(data.ok){
+                    //console.log(data.img);
+                    setImgList( oldArray => [...oldArray, data.img] );
+                    setErrorMsg('');
+                } else{
+                    setErrorMsg(data.message);
+                }
             }
+            
         }else{
             setErrorMsg('Inserte una imagen');
         }
@@ -108,7 +113,7 @@ export default function Usuario( props ) {
 
                     </ContenedorImagenes>
                     <ContenedorInput>
-                        <input id='inputImage' type='file' name='myImg' onChange={(event) => {setArchivo(event.target.files[0])}}></input>
+                        <input id='inputImage' type='file' multiple name='myImg' onChange={(event) => {setArchivo(event.target.files)}}></input>
                         <span>{ errorMsg }</span>
                         <BotonSubir onClick={subirImagen}> <img src='./imagenes/upload.svg'></img> </BotonSubir>
                     </ContenedorInput>
