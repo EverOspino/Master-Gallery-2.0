@@ -33,6 +33,7 @@ export default function Registro()  {
             if(data.ok){
                 sessionStorage.setItem('usuario', registerEmail);
                 sessionStorage.setItem('nombre', registerNombre);
+                sessionStorage.setItem('id', data.user._id);
 
                 document.getElementById('name').value = '';
                 document.getElementById('email').value = '';

@@ -116,7 +116,7 @@ exports.register = async(req, res, next)=>{
             if(exists) return res.json({ok: false, message: "El usuario ya existe"});
     
             await newUser.save();
-            res.json({ok: true, message: 'El usuario fue registrado'});
+            res.json({ok: true, message: 'El usuario fue registrado', user: newUser});
         }
     } catch (error) {
         console.log(error);
